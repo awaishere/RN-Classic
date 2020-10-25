@@ -4,14 +4,18 @@ import {
   View,
   StatusBar,
   Text,
+  PermissionsAndroid,
   ScrollView,
   TouchableOpacity
 } from 'react-native';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import FileViewer from 'react-native-file-viewer';
 import { connect } from 'react-redux';
 import { UserActions } from 'app/store/actions';
 
 import Style from 'app/style';
 import { NavigationBar } from 'app/components'
+import pdfRenderer from './pdf'
 
 let connectProps = {
   ...UserActions,
@@ -22,6 +26,51 @@ let connectState = (state) => ({
 
 let enhancer = connect(connectState, connectProps);
 
+const createPDF = async details => {
+  let options = {
+    html: pdfRenderer(details),
+    fileName: 'Invoice',
+    directory: 'Documents',
+  };
+
+  let file = await RNHTMLtoPDF.convert(options);
+  FileViewer.open(file.filePath)
+    .then(() => {
+    })
+    .catch(error => {
+      console.log(error)
+    });
+}
+
+function generatePDF(details) {
+  async function requestExternalWritePermission(details) {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Invoicer App External Storage Write Permission',
+          message:
+            'Invoicer App needs access to Storage data in your SD Card ',
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        createPDF(details);
+      } else {
+        alert('WRITE_EXTERNAL_STORAGE permission denied');
+      }
+    } catch (err) {
+      alert('Write permission err', err);
+      console.warn(err);
+    }
+  }
+
+  if (Platform.OS === 'android') {
+    requestExternalWritePermission(details);
+  } else {
+    createPDF(details);
+  }
+}
+
 function Screen(props) {
 
   let { details } = props;
@@ -30,7 +79,7 @@ function Screen(props) {
     <View style={styles.container}>
       <StatusBar translucent={true} barStyle="light-content" />
 
-      <NavigationBar title={"Invoicer"} />
+      <NavigationBar title={"Invoice Details"} />
 
       <ScrollView>
         <View style={styles.detailsContainer}>
@@ -70,7 +119,7 @@ function Screen(props) {
           </View>
         </View>
 
-        <TouchableOpacity style={[styles.btnStyle, { marginBottom: 20 }]} onPress={() => { }}>
+        <TouchableOpacity style={[styles.btnStyle, { marginBottom: 20 }]} onPress={() => { generatePDF(details) }}>
           <Text style={styles.textStyle}>Generate PDF</Text>
         </TouchableOpacity>
 
