@@ -1,5 +1,4 @@
 const pdfRenderer = details => {
-  console.log(details)
   return `
     <h1 style="text-align: center;">
       <strong>Invoicer</strong>
