@@ -1,14 +1,18 @@
-import HomeScreen from 'app/routes/Home'
+import InvoiceScreen from 'app/routes/Invoice'
+import DetailsScreen from 'app/routes/Details'
 
 import { createStackNavigator } from 'react-navigation-stack'
 
 export default createStackNavigator({
-  home: {
-    screen: HomeScreen,
+  invoice: {
+    screen: InvoiceScreen,
+  },
+  details: {
+    screen: DetailsScreen,
   },
 },
   {
-    initialRouteName: 'home',
+    initialRouteName: 'invoice',
     defaultNavigationOptions: {
       header: null
     }

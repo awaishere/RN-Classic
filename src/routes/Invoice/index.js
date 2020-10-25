@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,12 +8,39 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native';
+import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
+import { UserActions } from 'app/store/actions';
 
 import Style from 'app/style';
 import { NavigationBar } from 'app/components'
 
-function Screen() {
+let connectProps = {
+  ...UserActions,
+};
+let connectState = (state) => ({
+  details: state.User.current.get('invoice_details')
+});
+
+let enhancer = connect(connectState, connectProps);
+
+function Screen(props) {
+
+  let [invoiceDetails, setInvoiceDetails] = useState({
+    product_name: '',
+    price: '',
+    quantity: '',
+    billing_address: '',
+    shipping_address: '',
+    contractor_name: '',
+    feedback: ''
+  })
+
+  const handleInputChange = ({ name, text }) => {
+    setInvoiceDetails({ ...invoiceDetails, [name]: text })
+  }
+
+  let { generateInvoice } = props;
 
   return (
     <View style={styles.container}>
@@ -28,6 +55,10 @@ function Screen() {
             autoCapitalize="none"
             placeholderTextColor="#2CA2C7"
             style={styles.inputStyle}
+            onChangeText={text => handleInputChange({
+              name: "product_name",
+              text
+            })}
           />
         </View>
 
@@ -38,6 +69,10 @@ function Screen() {
             autoCapitalize="none"
             placeholderTextColor="#2CA2C7"
             style={styles.inputStyle}
+            onChangeText={text => handleInputChange({
+              name: "price",
+              text
+            })}
           />
         </View>
 
@@ -48,6 +83,10 @@ function Screen() {
             autoCapitalize="none"
             placeholderTextColor="#2CA2C7"
             style={styles.inputStyle}
+            onChangeText={text => handleInputChange({
+              name: "quantity",
+              text
+            })}
           />
         </View>
 
@@ -57,6 +96,10 @@ function Screen() {
             autoCapitalize="none"
             placeholderTextColor="#2CA2C7"
             style={styles.inputStyle}
+            onChangeText={text => handleInputChange({
+              name: "billing_address",
+              text
+            })}
           />
         </View>
 
@@ -66,6 +109,10 @@ function Screen() {
             autoCapitalize="none"
             placeholderTextColor="#2CA2C7"
             style={styles.inputStyle}
+            onChangeText={text => handleInputChange({
+              name: "shipping_address",
+              text
+            })}
           />
         </View>
 
@@ -75,6 +122,10 @@ function Screen() {
             autoCapitalize="none"
             placeholderTextColor="#2CA2C7"
             style={styles.inputStyle}
+            onChangeText={text => handleInputChange({
+              name: "contractor_name",
+              text
+            })}
           />
         </View>
 
@@ -87,11 +138,16 @@ function Screen() {
             textAlignVertical={'top'}
             multiline={true}
             style={styles.inputStyle}
+            onChangeText={text => handleInputChange({
+              name: "feedback",
+              text
+            })}
           />
         </View>
 
         <TouchableOpacity style={styles.btnStyle} onPress={() => {
-
+          generateInvoice(invoiceDetails)
+          props.navigation.navigate('details')
         }}>
           <Text style={styles.textStyle}>Generate Invoice</Text>
         </TouchableOpacity>
@@ -149,4 +205,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Screen
+export default enhancer(Screen);

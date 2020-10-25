@@ -2,26 +2,17 @@ import { combineReducers } from "redux"
 import { Map } from 'immutable'
 
 export default combineReducers({
-  users: users
+  current: users
 })
 
 const initialMap = {
-  products: [],
-  query: '',
-  all_products: [],
+  invoice_details: null
 }
 
 function users(state = Map(initialMap), action) {
   switch (action.type) {
-    case 'GET_ALL_PRODUCTS':
-      return state.set("products", action.payload.products)
-        .set('all_products', action.payload.products);
-    case 'SET_SEARCHBAR':
-      return state.set("query", action.payload.query);
-    case 'RESET_SEARCHBAR':
-      return state.set("query", '');
-    case 'SEARCH_PRODUCTS':
-      return state.set("products", action.payload.products)
+    case 'SET_INVOICE':
+      return state.set("invoice_details", action.payload);
     default:
       return state;
   }

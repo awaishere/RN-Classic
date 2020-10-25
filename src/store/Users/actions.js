@@ -1,7 +1,7 @@
-const logout = () => dispatch => {
-  dispatch({ type: 'RESET_STATE' });
+const generateInvoice = (details) => dispatch => {
+  dispatch({ type: 'SET_INVOICE', payload: details });
 }
 
 export {
-  logout
+  generateInvoice
 }
