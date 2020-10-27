@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
     padding: Platform.OS === 'android' ? 13 : 18,
     fontSize: 13,
     width: '100%',
-    fontFamily: 'Montserrat-Medium',
     color: '#2CA2C7',
   },
   textInputWrapper: {
